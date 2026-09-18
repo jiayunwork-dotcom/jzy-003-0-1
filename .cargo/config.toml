@@ -1,0 +1,8 @@
+# On this aarch64 Linux environment the default `cc` on PATH is a
+# sandbox wrapper that rejects linker invocations, so point cargo at the
+# real GCC. This section only matches aarch64-unknown-linux-gnu targets and
+# is therefore inert on other architectures (including x86_64 CI/builds).
+# The path /usr/bin/gcc is provided by the gcc package both here and in the
+# rust:slim Docker build image.
+[target.aarch64-unknown-linux-gnu]
+linker = "/usr/bin/gcc"

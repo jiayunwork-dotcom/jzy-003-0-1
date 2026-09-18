@@ -1,0 +1,32 @@
+services:
+  kvstore:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kvstore:latest
+    container_name: kvstore
+    ports:
+      - "8080:8080"
+    volumes:
+      - kvstore-data:/data
+    environment:
+      DATA_DIR: /data
+      LISTEN_ADDR: 0.0.0.0:8080
+      # Snapshot + truncate WAL when it grows past 4 MiB.
+      WAL_COMPACT_THRESHOLD: "4194304"
+      MAX_KEY_BYTES: "65536"
+      MAX_VALUE_BYTES: "16777216"
+      MAX_OPS_PER_TXN: "1024"
+      # Seed the built-in demo workload on first start.
+      SEED_ON_FRESH: "true"
+      RUST_LOG: info
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  kvstore-data:

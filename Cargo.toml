@@ -1,0 +1,31 @@
+[package]
+name = "kvstore"
+version = "0.1.0"
+edition = "2021"
+description = "Standalone in-memory transactional key-value store with WAL + snapshots"
+
+[[bin]]
+name = "kvstore"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal", "sync"] }
+axum = { version = "0.7", features = ["macros"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+parking_lot = "0.12"
+crc32fast = "1"
+bincode = "1.3"
+base64 = "0.22"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[dev-dependencies]
+tempfile = "3"
+tower = { version = "0.4", features = ["util"] }
+http-body-util = "0.1"
+bytes = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

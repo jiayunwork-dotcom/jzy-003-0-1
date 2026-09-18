@@ -1,0 +1,27 @@
+services:
+  kvs:
+    build: .
+    image: memtxn-kvs:latest
+    container_name: memtxn-kvs
+    ports:
+      - "8080:8080"
+    volumes:
+      - kvs-data:/data
+    environment:
+      LISTEN_ADDR: "0.0.0.0:8080"
+      DATA_DIR: "/data"
+      # Limits are validated at startup; zero/negative values abort the boot.
+      MAX_KEY_BYTES: "65536"
+      MAX_VALUE_BYTES: "1048576"
+      MAX_TXN_OPS: "1024"
+      COMPACTION_THRESHOLD_BYTES: "16777216"
+      RUST_LOG: "info"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  kvs-data:
